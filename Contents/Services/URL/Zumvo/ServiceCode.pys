@@ -1,0 +1,100 @@
+import inspect
+import os
+import sys
+import urllib2
+import base64
+
+try:
+	path = os.getcwd().split("?\\")[1].split('Plug-in Support')[0]+"Plug-ins\Zumvo.bundle\Contents\Services\URL\Zumvo\Modules"
+except:
+	path = os.getcwd().split("Plug-in Support")[0]+"Plug-ins/Zumvo.bundle/Contents/Services/URL/Zumvo/Modules"
+if path not in sys.path:
+	sys.path.append(path)
+
+import zumvofilmDecrypter
+
+HTTP_HEADERS = {
+	'Accept	text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Encoding:	gzip, deflate',
+	'Accept-Language:	en-US,en;q=0.5',
+	'Connection:		keep-alive',
+	'Referer:		http://zumvo.com/player/player.swf',
+	'User-Agent:		Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0'
+}
+
+BASE_URL = 'http://zumvo.com/'
+
+########################################################################################
+def NormalizeURL(url):
+
+	return url.split('&')[0]
+
+
+
+
+########################################################################################
+def MetadataObjectForURL(url):
+
+	page = HTML.ElementFromURL(url)
+	
+	title = page.xpath("//h1[@class='item']/a/span/@title")[0]
+	description = page.xpath("//head/meta[@property='og:description']/@content")[0]
+	thumb = page.xpath("//head/meta[@property='og:image']/@content")[0]
+	video_url = page.xpath("//h1[@class='item']/a/@href")[0]
+
+	#pageContent = HTTP.Request(url).content
+	#proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(pageContent).groups()[0]
+	#title = 'http://zumvo.com/player/player.swf?proxy.link=' + str(proxy_url) + '&width=100%&height=100%&id=mediaplayer&autostart=true&abouttext=zumvo.com&plugins=http://plugins.longtailvideo.com/5/captions/captions.swf,timeslidertootipplugin-2h,http://zumvo.com/player/plugins/proxy.swf&captions.file=http://zumvo.com/player/zumvo.srt&captions.color=#FFCC00&proxy.pluginmode=FLASH'
+	#videourl = urllib2.urlopen(title)
+	#title = videourl.read()
+
+	ratingvalue = url
+
+	return VideoClipObject(
+		title = title,
+		summary = description,
+		thumb = thumb,
+		rating_key = ratingvalue
+	)
+
+########################################################################################
+def MediaObjectsForURL(url):
+    mo = []
+       
+    for resolution in ['1080', '720', '480', '360']:
+        mo.append(
+            MediaObject(
+                video_resolution = resolution,
+                container = Container.MP4,
+                audio_channels = 2,
+                video_codec = VideoCodec.H264,
+                audio_codec = AudioCodec.AAC,
+		optimized_for_streaming = True,
+                parts = [
+                    PartObject(
+                        key = 
+                            Callback(
+                                PlayVideo,
+                                url = url,
+                                resolution = resolution
+                            )
+                    )
+                ]
+            )
+        )
+        
+    return mo
+
+########################################################################################
+@indirect
+def PlayVideo(url, resolution):
+
+	pageContent = HTTP.Request(url).content
+	proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(pageContent).groups()[0]
+	EncodedLink = proxy_url.replace('zumvo*','',1)
+	x = zumvofilmDecrypter.zumvofilmDecrypter(198,128)
+	Key = "ZGE3MWNmNWU4MzdkZWY2YTNmMjllMTc0ZjJmMDNhOGU0MTQwODAxNTM3MjI2MQ=="
+	final_url = x.decrypt(EncodedLink, Key.decode('base64','strict'), "ECB").split('\0')[0]
+	         
+       	return IndirectResponse(VideoClipObject, key = final_url)
+
