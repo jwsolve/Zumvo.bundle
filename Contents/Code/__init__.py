@@ -25,9 +25,9 @@ def Start():
 
 	ObjectContainer.title1 = TITLE
 	ObjectContainer.art = R(ART)
-	DirectoryObject.thumb = R(ICON_COVER)
+	DirectoryObject.thumb = R(ICON_LIST)
 	DirectoryObject.art = R(ART)
-	VideoClipObject.thumb = R(ICON_COVER)
+	VideoClipObject.thumb = R(ICON_MOVIES)
 	VideoClipObject.art = R(ART)
 	
 	HTTP.CacheTime = CACHE_1HOUR
@@ -41,8 +41,28 @@ def Start():
 def MainMenu():
 
 	oc = ObjectContainer()
-	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Movies", category="movies", page_count = 1), title = "Movies", thumb = R(ICON_MOVIES)))
-	
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Action", category="action", page_count = 1), title = "Action", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Adventure", category="adventure", page_count = 1), title = "Adventure", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Animation", category="animation", page_count = 1), title = "Animation", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Biography", category="biography", page_count = 1), title = "Biography", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Comedy", category="comedy", page_count = 1), title = "Comedy", thumb = R(ICON_MOVIES)))	
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Crime", category="crime", page_count = 1), title = "Crime", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Documentary", category="documentary", page_count = 1), title = "Documentary", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Drama", category="drama", page_count = 1), title = "Drama", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Family", category="family", page_count = 1), title = "Family", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Fantasy", category="fantasy", page_count = 1), title = "Fantasy", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="History", category="history", page_count = 1), title = "History", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Horror", category="horror", page_count = 1), title = "Horror", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Music", category="music", page_count = 1), title = "Music", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Mystery", category="mystery", page_count = 1), title = "Mystery", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Romance", category="romance", page_count = 1), title = "Romance", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Sci-Fi", category="sci-fi", page_count = 1), title = "Sci-Fi", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Short", category="short", page_count = 1), title = "Short", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Sport", category="sport", page_count = 1), title = "Sport", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Talk Show", category="talk-show", page_count = 1), title = "Talk Show", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Thriller", category="thriller", page_count = 1), title = "Thriller", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="War", category="war", page_count = 1), title = "Western", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Western", category="western", page_count = 1), title = "Western", thumb = R(ICON_MOVIES)))
 	return oc
 
 ######################################################################################
@@ -52,7 +72,7 @@ def MainMenu():
 def ShowCategory(title, category, page_count):
 
 	oc = ObjectContainer(title1 = title)
-	page_data = HTML.ElementFromURL(MOVIES_URL + '/page/' + str(page_count) + '/')
+	page_data = HTML.ElementFromURL(BASE_URL + '/' + str(category) + '/page/' + str(page_count) + '/')
 	
 	for each in page_data.xpath("//ul[@class='list-film']/li"):
 		url = each.xpath("./div[@class='inner']/a/@href")[0]
@@ -67,7 +87,7 @@ def ShowCategory(title, category, page_count):
 		)
 
 	oc.add(NextPageObject(
-		key = Callback(ShowCategory, title = title, page_count = int(page_count) + 1),
+		key = Callback(ShowCategory, title = category, category = category, page_count = int(page_count) + 1),
 		title = "More...",
 		thumb = R(ICON_NEXT)
 			)
