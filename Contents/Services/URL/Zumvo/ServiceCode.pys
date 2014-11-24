@@ -93,7 +93,7 @@ def PlayVideo(url, resolution):
 	proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(pageContent).groups()[0]
 	EncodedLink = proxy_url.replace('zumvo*','',1)
 	x = zumvofilmDecrypter.zumvofilmDecrypter(198,128)
-	Key = "ZGE3MWNmNWU4MzdkZWY2YTNmMjllMTc0ZjJmMDNhOGU0MTQwODAxNTM3MjI2MQ=="
+	Key = "NlFQU1NQSGJrbXJlNzlRampXdHk="
 	final_url = x.decrypt(EncodedLink, Key.decode('base64','strict'), "ECB").split('\0')[0]
 	         
        	return IndirectResponse(VideoClipObject, key = final_url)
