@@ -61,7 +61,7 @@ def MainMenu():
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Sport", category="sport", page_count = 1), title = "Sport", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Talk Show", category="talk-show", page_count = 1), title = "Talk Show", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Thriller", category="thriller", page_count = 1), title = "Thriller", thumb = R(ICON_MOVIES)))
-	oc.add(DirectoryObject(key = Callback(ShowCategory, title="War", category="war", page_count = 1), title = "Western", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="War", category="war", page_count = 1), title = "War", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Western", category="western", page_count = 1), title = "Western", thumb = R(ICON_MOVIES)))
 	return oc
 
