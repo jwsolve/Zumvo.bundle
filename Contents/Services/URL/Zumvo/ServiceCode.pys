@@ -66,7 +66,7 @@ def MetadataObjectForURL(url):
 def MediaObjectsForURL(url):
     mo = []
        
-    for resolution in ['1080', '720', '480', '360']:
+    for resolution in ['720', '480', '360']:
         mo.append(
             MediaObject(
                 video_resolution = resolution,

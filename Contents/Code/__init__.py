@@ -77,7 +77,7 @@ def ShowCategory(title, category, page_count):
 	for each in page_data.xpath("//ul[@class='list-film']/li"):
 		url = each.xpath("./div[@class='inner']/a/@href")[0]
 		title = each.xpath("./div[@class='inner']/a/@title")[0]
-		thumb = each.xpath("./div[@class='inner']/a/img/@src")[0]
+		thumb = each.xpath("./div[@class='inner']/a/img/@data-original")[0]
 		
 		oc.add(DirectoryObject(
 			key = Callback(EpisodeDetail, title = title, url = url),
