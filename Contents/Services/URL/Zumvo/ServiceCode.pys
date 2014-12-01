@@ -106,7 +106,7 @@ def PlayVideo(url, resolution):
 		first_video_url = picasaurl.replace("\"url\":\"","",1)
 		final_url = first_video_url.replace('\"','',1)
 	         
-		return IndirectResponse(VideoClipObject, key = HTTPLiveStreamURL(final_url))
+		return IndirectResponse(VideoClipObject, key = final_url)
 	except:
 		return ObjectContainer(header="Error", message="Unfortunately this video is unavailable")
 
