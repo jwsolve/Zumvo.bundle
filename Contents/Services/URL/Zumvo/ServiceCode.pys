@@ -1,6 +1,5 @@
 import os
 import sys
-import urllib2
 import base64
 import re
 
