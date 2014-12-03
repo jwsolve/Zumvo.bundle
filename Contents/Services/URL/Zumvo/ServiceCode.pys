@@ -1,9 +1,6 @@
-import inspect
 import os
 import sys
-import urllib2
 import base64
-import re
 
 try:
 	path = os.getcwd().split("?\\")[1].split('Plug-in Support')[0]+"Plug-ins\Zumvo.bundle\Contents\Services\URL\Zumvo\Modules"
@@ -14,100 +11,73 @@ if path not in sys.path:
 
 import zumvofilmDecrypter
 
-HTTP_HEADERS = {
-	'Accept	text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Encoding:	gzip, deflate',
-	'Accept-Language:	en-US,en;q=0.5',
-	'Connection:		keep-alive',
-	'Referer:		http://zumvo.com/player/player.swf',
-	'User-Agent:		Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0'
-}
-
-BASE_URL = 'http://zumvo.com/'
-
 ########################################################################################
 def NormalizeURL(url):
 
 	return url.split('&')[0]
 
-
-
-
 ########################################################################################
 def MetadataObjectForURL(url):
 
 	page = HTML.ElementFromURL(url)
-	
+
 	title = page.xpath("//h1[@class='item']/a/span/@title")[0]
 	description = page.xpath("//head/meta[@property='og:description']/@content")[0]
 	thumb = page.xpath("//head/meta[@property='og:image']/@content")[0]
-	video_url = page.xpath("//h1[@class='item']/a/@href")[0]
-	ratingvalue = url
-
-	#pageContent = HTTP.Request(url).content
-	#proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(pageContent).groups()[0]
-	#EncodedLink = proxy_url.replace('zumvo*','',1)
-	#x = zumvofilmDecrypter.zumvofilmDecrypter(198,128)
-	#Key = "NlFQU1NQSGJrbXJlNzlRampXdHk="
-	#decoded_url = x.decrypt(EncodedLink, Key.decode('base64','strict'), "ECB").split('\0')[0]
-	#picasa = HTTP.Request(decoded_url).content
-	#picasaurl = re.findall('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"', picasa)[1]
-	#title = picasaurl.replace("\"url\":\"","",1)
-	#title = title.replace('\"','',1)
 
 	return VideoClipObject(
 		title = title,
 		summary = description,
-		thumb = thumb,
-		rating_key = ratingvalue
+		thumb = thumb
 	)
 
 ########################################################################################
 def MediaObjectsForURL(url):
-    mo = []
-       
-    for resolution in ['720', '480', '360']:
-        mo.append(
-            MediaObject(
-                video_resolution = resolution,
-                container = Container.MP4,
-                audio_channels = 2,
-                video_codec = VideoCodec.H264,
-                audio_codec = AudioCodec.AAC,
-		optimized_for_streaming = True,
-                parts = [
-                    PartObject(
-                        key = 
-                            Callback(
-                                PlayVideo,
-                                url = url,
-                                resolution = resolution
-                            )
-                    )
-                ]
-            )
-        )
-        
-    return mo
+
+	mo = []
+
+	for resolution in ['720', '480', '360']:
+
+		mo.append(
+			MediaObject(
+				video_resolution = resolution,
+				container = Container.MP4,
+				audio_channels = 2,
+				video_codec = VideoCodec.H264,
+				audio_codec = AudioCodec.AAC,
+				optimized_for_streaming = True,
+				parts = [
+					PartObject(
+						key =
+							Callback(
+								PlayVideo,
+								url = url,
+								resolution = resolution
+							)
+					)
+				]
+			)
+		)
+
+	return mo
 
 ########################################################################################
 @indirect
 def PlayVideo(url, resolution):
 
-	pageContent = HTTP.Request(url).content
-	proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(pageContent).groups()[0]
-	EncodedLink = proxy_url.replace('zumvo*','',1)
+	page_content = HTTP.Request(url).content
+	proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(page_content).groups()[0]
+	encoded_link = proxy_url.replace('zumvo*','',1)
 	x = zumvofilmDecrypter.zumvofilmDecrypter(198,128)
-	Key = "NlFQU1NQSGJrbXJlNzlRampXdHk="
-	decoded_url = x.decrypt(EncodedLink, Key.decode('base64','strict'), "ECB").split('\0')[0]
+	key = "NlFQU1NQSGJrbXJlNzlRampXdHk="
+	decoded_url = x.decrypt(encoded_link, key.decode('base64','strict'), "ECB").split('\0')[0]
 	picasa = HTTP.Request(decoded_url).content
+
 	try:
-		picasaurl = re.findall('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"', picasa)[1]
-		first_video_url = picasaurl.replace("\"url\":\"","",1)
+		picasa_url= Regex('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"').findall(picasa)[1]
+		first_video_url = picasa_url.replace("\"url\":\"","",1)
 		final_url = first_video_url.replace('\"','',1)
-	         
-		return IndirectResponse(VideoClipObject, key = final_url)
+
+		return IndirectResponse(VideoClipObject, key=final_url)
 	except:
 		return ObjectContainer(header="Error", message="Unfortunately this video is unavailable")
-
-
