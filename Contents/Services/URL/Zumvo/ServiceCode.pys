@@ -1,7 +1,6 @@
 import os
 import sys
 import base64
-import re
 
 try:
 	path = os.getcwd().split("?\\")[1].split('Plug-in Support')[0]+"Plug-ins\Zumvo.bundle\Contents\Services\URL\Zumvo\Modules"
