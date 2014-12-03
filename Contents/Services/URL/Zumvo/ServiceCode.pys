@@ -93,8 +93,9 @@ def PlayVideo(url, resolution):
 	Key = "NlFQU1NQSGJrbXJlNzlRampXdHk="
 	decoded_url = x.decrypt(EncodedLink, Key.decode('base64','strict'), "ECB").split('\0')[0]
 	picasa = HTTP.Request(decoded_url).content
+
 	try:
-		picasaurl = re.findall('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"', picasa)[1]
+		picasaurl= Regex('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"').findall(picasa)[1]
 		first_video_url = picasaurl.replace("\"url\":\"","",1)
 		final_url = first_video_url.replace('\"','',1)
 
