@@ -42,7 +42,6 @@ def MetadataObjectForURL(url):
 	description = page.xpath("//head/meta[@property='og:description']/@content")[0]
 	thumb = page.xpath("//head/meta[@property='og:image']/@content")[0]
 	video_url = page.xpath("//h1[@class='item']/a/@href")[0]
-	ratingvalue = url
 
 	#pageContent = HTTP.Request(url).content
 	#proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(pageContent).groups()[0]
@@ -58,8 +57,7 @@ def MetadataObjectForURL(url):
 	return VideoClipObject(
 		title = title,
 		summary = description,
-		thumb = thumb,
-		rating_key = ratingvalue
+		thumb = thumb
 	)
 
 ########################################################################################
