@@ -65,19 +65,19 @@ def MediaObjectsForURL(url):
 @indirect
 def PlayVideo(url, resolution):
 
-	pageContent = HTTP.Request(url).content
-	proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(pageContent).groups()[0]
-	EncodedLink = proxy_url.replace('zumvo*','',1)
+	page_content = HTTP.Request(url).content
+	proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(page_content).groups()[0]
+	encoded_link = proxy_url.replace('zumvo*','',1)
 	x = zumvofilmDecrypter.zumvofilmDecrypter(198,128)
-	Key = "NlFQU1NQSGJrbXJlNzlRampXdHk="
-	decoded_url = x.decrypt(EncodedLink, Key.decode('base64','strict'), "ECB").split('\0')[0]
+	key = "NlFQU1NQSGJrbXJlNzlRampXdHk="
+	decoded_url = x.decrypt(encoded_link, key.decode('base64','strict'), "ECB").split('\0')[0]
 	picasa = HTTP.Request(decoded_url).content
 
 	try:
-		picasaurl= Regex('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"').findall(picasa)[1]
-		first_video_url = picasaurl.replace("\"url\":\"","",1)
+		picasa_url= Regex('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"').findall(picasa)[1]
+		first_video_url = picasa_url.replace("\"url\":\"","",1)
 		final_url = first_video_url.replace('\"','',1)
 
-		return IndirectResponse(VideoClipObject, key = final_url)
+		return IndirectResponse(VideoClipObject, key=final_url)
 	except:
 		return ObjectContainer(header="Error", message="Unfortunately this video is unavailable")
