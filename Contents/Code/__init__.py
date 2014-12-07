@@ -17,6 +17,7 @@ ICON_SERIES = "icon-series.png"
 ICON_QUEUE = "icon-queue.png"
 BASE_URL = "http://zumvo.com"
 MOVIES_URL = "http://zumvo.com/movies"
+SEARCH_URL = "http://zumvo.com/search/"
 
 ######################################################################################
 # Set global variables
@@ -41,6 +42,7 @@ def Start():
 def MainMenu():
 
 	oc = ObjectContainer()
+	oc.add(InputDirectoryObject(key = Callback(Search), title='Search', summary='Search Zumvo', prompt='Search for...'))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Action", category="action", page_count = 1), title = "Action", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Adventure", category="adventure", page_count = 1), title = "Adventure", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Animation", category="animation", page_count = 1), title = "Animation", thumb = R(ICON_MOVIES)))
@@ -117,4 +119,26 @@ def EpisodeDetail(title, url):
 	)	
 	
 	return oc	
-	
+
+####################################################################################################
+@route(PREFIX + "/search")
+def Search(query):
+
+	oc = ObjectContainer(title2='Search Results')
+	data = HTTP.Request(SEARCH_URL + '%s' % String.Quote(query, usePlus=True), headers="").content
+
+	html = HTML.ElementFromString(data)
+
+	for movie in html.xpath("//ul[@class='list-film']/li"):
+		url = movie.xpath("./div[@class='inner']/a/@href")[0]
+		title = movie.xpath("./div[@class='inner']/a/@title")[0]
+		thumb = movie.xpath("./div[@class='inner']/a/img/@data-original")[0]
+
+		oc.add(DirectoryObject(
+				key = Callback(EpisodeDetail, title = title, url = url),
+				title = title,
+				thumb = Resource.ContentsOfURLWithFallback(url = thumb, fallback='icon-cover.png')
+				)
+		)
+
+	return oc
