@@ -105,8 +105,9 @@ def EpisodeDetail(title, url):
 	
 	oc = ObjectContainer(title1 = title)
 	page_data = HTML.ElementFromURL(url)
-	title = page_data.xpath("//head/meta[@property='og:title']")[0]
+	title = page_data.xpath("//head/meta[@property='og:title']")
 	thumb = page_data.xpath("//div[@class='poster']/a/img/@src")[0]
+	title = page_data.xpath("//h2[@class='item last-child']/span/@title")[0]
 
 	#load recursive iframes to find google docs url
 	first_frame_url = page_data.xpath("//a[@class='btn-watch']/@href")[0]
