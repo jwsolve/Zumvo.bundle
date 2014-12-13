@@ -1,6 +1,6 @@
 ######################################################################################
 #
-#	Zumvo.com - v0.01
+#	Zumvo.com - v0.10
 #
 ######################################################################################
 
@@ -43,6 +43,10 @@ def MainMenu():
 
 	oc = ObjectContainer()
 	oc.add(InputDirectoryObject(key = Callback(Search), title='Search', summary='Search Zumvo', prompt='Search for...'))
+
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="HD Movies", category="hd", page_count = 1), title = "HD Movies", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Cinema Releases", category="cinema", page_count = 1), title = "Cinema Releases", thumb = R(ICON_MOVIES)))
+	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Top movies", category="top", page_count = 1), title = "Top Movies", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Action", category="action", page_count = 1), title = "Action", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Adventure", category="adventure", page_count = 1), title = "Adventure", thumb = R(ICON_MOVIES)))
 	oc.add(DirectoryObject(key = Callback(ShowCategory, title="Animation", category="animation", page_count = 1), title = "Animation", thumb = R(ICON_MOVIES)))
