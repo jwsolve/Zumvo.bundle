@@ -34,36 +34,25 @@ def MetadataObjectForURL(url):
 ########################################################################################
 def MediaObjectsForURL(url):
 
-	mo = []
+	return [
+		MediaObject(
+			parts = [
+				PartObject(key=Callback(PlayVideo, url=url, post_url=url, res=resolution))
+			],
+			video_resolution = resolution,
+			bitrate = bitrate,
+			container = Container.MP4,
+			video_codec = VideoCodec.H264,
+			audio_codec = AudioCodec.AAC,
+			audio_channels = 2,
+			optimized_for_streaming = True
+		) for resolution, bitrate in [('1080', 3000), ('720', 1500), ('360', 750)]
+	]
 
-	for resolution in ['720', '480', '360']:
-
-		mo.append(
-			MediaObject(
-				video_resolution = resolution,
-				container = Container.MP4,
-				audio_channels = 2,
-				video_codec = VideoCodec.H264,
-				audio_codec = AudioCodec.AAC,
-				optimized_for_streaming = True,
-				parts = [
-					PartObject(
-						key =
-							Callback(
-								PlayVideo,
-								url = url,
-								resolution = resolution
-							)
-					)
-				]
-			)
-		)
-
-	return mo
 
 ########################################################################################
 @indirect
-def PlayVideo(url, resolution):
+def PlayVideo(url, res):
 
 	page_content = HTTP.Request(url).content
 	proxy_url = Regex('.*\"proxy.link\" *: *\"(.*)\".*', Regex.IGNORECASE|Regex.MULTILINE).search(page_content).groups()[0]
@@ -75,8 +64,7 @@ def PlayVideo(url, resolution):
 
 	try:
 		picasa_url= Regex('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"').findall(picasa)[1]
-		first_video_url = picasa_url.replace("\"url\":\"","",1)
-		final_url = first_video_url.replace('\"','',1)
+		final_url = picasa_url.replace("\"url\":\"","",1).replace('\"','',1)
 
 		return IndirectResponse(VideoClipObject, key=final_url)
 	except:
