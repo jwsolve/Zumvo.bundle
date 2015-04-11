@@ -1,10 +1,10 @@
 ######################################################################################
 #
-#	Zumvo.com - v0.10
+#	Zumvo.me - v1.10
 #
 ######################################################################################
 
-TITLE = "Zumvo.com"
+TITLE = "Zumvo"
 PREFIX = "/video/zumvo"
 ART = "art-default.jpg"
 ICON = "icon-default.png"
@@ -15,9 +15,9 @@ ICON_NEXT = "icon-next.png"
 ICON_MOVIES = "icon-movies.png"
 ICON_SERIES = "icon-series.png"
 ICON_QUEUE = "icon-queue.png"
-BASE_URL = "http://zumvo.com"
-MOVIES_URL = "http://zumvo.com/movies"
-SEARCH_URL = "http://zumvo.com/search/"
+BASE_URL = "http://zumvo.me"
+MOVIES_URL = "http://zumvo.me/movies"
+SEARCH_URL = "http://zumvo.me/search/"
 
 ######################################################################################
 # Set global variables
