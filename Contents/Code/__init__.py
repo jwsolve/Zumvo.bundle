@@ -33,7 +33,9 @@ def Start():
 	
 	HTTP.CacheTime = CACHE_1HOUR
 	HTTP.Headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36'
-	HTTP.Headers['Referer'] = 'http://zumvo.com/'
+	HTTP.Headers['Referer'] = 'http://zumvo.me/'
+	HTTP.Headers['Cookie'] = 'sucuri_uidc=fc351026930f391256e400f58058d015'
+	HTTP.Headers['Cookie'] = 'sucuri_uidc=153ee4f3934a5d361b69e50531d98d41'
 	
 ######################################################################################
 # Menu hierarchy
@@ -109,9 +111,14 @@ def EpisodeDetail(title, url):
 	
 	oc = ObjectContainer(title1 = title)
 	page_data = HTML.ElementFromURL(url)
-	title = page_data.xpath("//head/meta[@property='og:title']")
-	thumb = page_data.xpath("//div[@class='poster']/a/img/@src")[0]
-	title = page_data.xpath("//h2[@class='item last-child']/span/@title")[0]
+	try:
+		thumb = page_data.xpath("//div[@class='poster']/a/img/@src")[0]
+	except:
+		thumb = ""
+	try:
+		title = page_data.xpath("//h1[contains(@class,'title')]/text()")[0]
+	except:
+		title = page_data.xpath("//title/text()")[0]
 
 	#load recursive iframes to find google docs url
 	first_frame_url = page_data.xpath("//a[@class='btn-watch']/@href")[0]

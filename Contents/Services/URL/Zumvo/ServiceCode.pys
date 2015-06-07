@@ -11,6 +11,9 @@ if path not in sys.path:
 
 import zumvofilmDecrypter
 
+HTTP.Headers['Cookie'] = 'sucuri_uidc=fc351026930f391256e400f58058d015'
+HTTP.Headers['Cookie'] = 'sucuri_uidc=153ee4f3934a5d361b69e50531d98d41'
+
 ########################################################################################
 def NormalizeURL(url):
 
@@ -21,15 +24,20 @@ def MetadataObjectForURL(url):
 
 	page = HTML.ElementFromURL(url)
 
-	title = page.xpath("//h1[@class='item']/a/span/@title")[0]
-	description = page.xpath("//head/meta[@name='description']/@content")[0]
-	#thumb = page.xpath("//head/meta[@property='og:image']/@content")[0]
-	thumb = ""
+	title = page.xpath("//title/text()")[0]
+	try:
+		thumb = page.xpath("//meta[@property='og:image']/@content")[0]
+	except:
+		thumb = ""
+	try:
+		description = page.xpath("//meta[@property='og:description']/@content")[0]
+	except:
+		description = ""
 
 	return VideoClipObject(
 		title = title,
-		summary = description,
-		thumb = thumb
+		thumb = thumb,
+		summary = description
 	)
 
 ########################################################################################
@@ -38,21 +46,20 @@ def MediaObjectsForURL(url):
 	return [
 		MediaObject(
 			parts = [
-				PartObject(key=Callback(PlayVideo, url=url, post_url=url, res=resolution))
+				PartObject(key=Callback(PlayVideo, url=url, post_url=url, res=720))
 			],
-			video_resolution = resolution,
-			bitrate = bitrate,
+			video_resolution = 720,
+			bitrate = 1500,
 			container = Container.MP4,
 			video_codec = VideoCodec.H264,
 			audio_codec = AudioCodec.AAC,
 			audio_channels = 2,
 			optimized_for_streaming = True
-		) for resolution, bitrate in [('1080', 3000), ('720', 1500), ('360', 750)]
+		)
 	]
 
 
 ########################################################################################
-@indirect
 def PlayVideo(url, res):
 
 	page_content = HTTP.Request(url).content
@@ -67,6 +74,6 @@ def PlayVideo(url, res):
 		picasa_url= Regex('\"url\":\"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\"').findall(picasa)[1]
 		final_url = picasa_url.replace("\"url\":\"","",1).replace('\"','',1)
 
-		return IndirectResponse(VideoClipObject, key=final_url)
+		return Redirect(final_url)
 	except:
 		return ObjectContainer(header="Error", message="Unfortunately this video is unavailable")
